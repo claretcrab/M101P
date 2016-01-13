@@ -8,13 +8,13 @@ import sys
 # Author: Andrew Erlichson
 
 
-# connnecto to the db on standard port
+# connect to the db on standard port
 connection = pymongo.MongoClient("mongodb://localhost")
 
 
 
 db = connection.m101                 # attach to db
-collection = db.funnynumbers         # specify the colllection
+collection = db.funnynumbers         # specify the collection
 
 
 magic = 0
