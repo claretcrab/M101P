@@ -1,0 +1,88 @@
+db.dropDatabase()
+
+1)
+mongorestore --db enron enron
+
+use enron;
+db.messages.count()
+db.messages.find({
+  "headers.From": "andrew.fastow@enron.com",
+  "headers.To": "jeff.skilling@enron.com"
+}).count();
+
+
+2) 
+
+use enron;
+db.messages.aggregate([
+  { $project:
+    {
+      "_id": 1,
+      "headers.From": 1,
+      "headers.To": 1
+    }
+  },
+  { $unwind: "$headers.To"},
+  { $group:
+    {
+      _id: "$_id",
+      headersFrom: { $first: "$headers.From" },
+      headersTo: { $addToSet : "$headers.To" }
+    }
+  },
+  { $unwind : "$headersTo" },
+  { $group:
+    {
+      _id: {
+        "from": "$headersFrom",
+        "to": "$headersTo"
+      },
+      numMessages: { $sum: 1 }
+    }
+  },
+  { $sort: { numMessages: -1 }},
+  { $limit: 1 }
+]);
+
+3)
+
+use enron;
+db.messages.update(
+  { "headers.Message-ID": "<8147308.1075851042335.JavaMail.evans@thyme>" },
+  { $push : { "headers.To" : "mrpotatohead@mongodb.com"} }
+);
+
+4)
+
+mongoimport --db blog --collection posts --drop --file posts.json --batchSize 1
+
+5)
+
+a_1_b_1
+a_1_c_1
+a_1_b_1_c_-1
+
+6)
+
+Remove all indexes from the collection, leaving only the index on _id in place
+Set w=0, j=0 on writes
+
+7)
+
+mongoimport --db exam7 --collection albums --drop --file albums.json --batchSize 1
+mongoimport --db exam7 --collection images --drop --file images.json --batchSize 1
+
+db.images.find({"tags": "kittens",}).count();
+
+8)
+
+Maybe, it depends on whether Node 2 has processed the write
+
+9)
+
+patient_id
+
+10)
+
+The query scanned every document in the collection.
+The query returned 120,477 documents.
